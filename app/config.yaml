@@ -1,0 +1,8 @@
+model:
+  esm_model_name: "facebook/esm2_t6_8M_UR50D"
+  esm_embedding_dim: 320
+  max_len: 2048
+  d_model: 64
+  n_head: 4
+  n_layer: 3
+  o_dim: 2

@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*build/
+*dist/
+
+# IDE/Editor files
+.vscode/
+.idea/
+
+# Local test data (我們不希望將模擬數據上傳)
+saisdata_local_test/
+saisresult_local_test/

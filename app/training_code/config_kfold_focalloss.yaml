@@ -1,0 +1,30 @@
+data:
+  data_path: /home/hnz/下载/LIP_data_public.pkl
+
+model:
+  esm_model_name: "facebook/esm2_t6_8M_UR50D"
+  esm_embedding_dim: 320
+  max_len: 2048
+  d_model: 64
+  n_head: 4
+  n_layer: 3
+  o_dim: 2
+
+train:
+  n_splits: 5
+  seed: 42
+  patience: 5
+  epochs: 20
+
+  dataloader:
+    batch_size: 16
+    shuffle: false
+    num_workers: 8
+
+  optimizer:
+    lr: 0.00002
+    weight_decay: 0.01
+
+  focal_loss:
+    gamma: 2.0
+    alpha: 0.25
