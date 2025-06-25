@@ -10,7 +10,6 @@ from tqdm import tqdm
 from omegaconf import OmegaConf
 from transformers import AutoTokenizer, EsmModel
 
-
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, dropout=0.0, max_len=4096):
         super().__init__()
@@ -21,7 +20,6 @@ class PositionalEncoding(nn.Module):
         pe[0, :, 1::2] = torch.cos(position * div_term)
         self.register_buffer("pe", pe)
         self.dropout = nn.Dropout(p=dropout)
-
     def forward(self, x):
         x = x + self.pe[:, :x.size(1)]
         return self.dropout(x)
@@ -47,7 +45,6 @@ class DisProtModel(nn.Module):
             nn.Dropout(p=0.1),
             nn.Linear(self.d_model, model_config.o_dim)
         )
-
     def forward(self, esm_embeddings):
         x = self.embedding_projection(esm_embeddings)
         x = self.position_embed(x)
@@ -60,20 +57,18 @@ class DisProtModel(nn.Module):
 # ------------------------------------------------------------------------------------
 
 def predict_and_save_submission(config_path, model_dir, input_path, output_path):
-
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Using device: {device}")
     
     config = OmegaConf.load(config_path)
     
-    print(f"Loading feature extractor: {config.model.esm_model_name}")
-    esm_tokenizer = AutoTokenizer.from_pretrained(config.model.esm_model_name)
-    esm_model = EsmModel.from_pretrained(config.model.esm_model_name).to(device)
+    esm_model_local_path = "./esm2_model_local"
+    print(f"Loading feature extractor from local path: {esm_model_local_path}")
+    esm_tokenizer = AutoTokenizer.from_pretrained(esm_model_local_path)
+    esm_model = EsmModel.from_pretrained(esm_model_local_path).to(device)
     esm_model.eval()
 
-
     models = []
-
     num_folds = 5 
     print(f"Loading {num_folds} trained models for ensembling from '{model_dir}'...")
     
@@ -92,7 +87,6 @@ def predict_and_save_submission(config_path, model_dir, input_path, output_path)
         raise RuntimeError(f"Fatal: No models were loaded from '{model_dir}'. Please check the path and file names.")
     print(f"Successfully loaded {len(models)} models.")
 
-
     print(f"Loading test data from {input_path}...")
     with open(input_path, 'rb') as f:
         test_data_dicts = pickle.load(f)
@@ -102,7 +96,6 @@ def predict_and_save_submission(config_path, model_dir, input_path, output_path)
     for item in tqdm(test_data_dicts, desc="Predicting"):
         protein_id = item.get('id', 'unknown_id')
         sequence = item.get('sequence', '')
-        
         if not sequence:
             print(f"Warning: Found sample with empty sequence for ID {protein_id}. Skipping.")
             continue
@@ -117,7 +110,6 @@ def predict_and_save_submission(config_path, model_dir, input_path, output_path)
         all_logits = []
         with torch.no_grad():
             esm_embeddings = esm_model(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
-            
             for model in models:
                 logits = model(esm_embeddings)
                 all_logits.append(logits)
