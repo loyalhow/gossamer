@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INPUT_DATA_PATH="/saisdata/LIP_data_public.pkl"
+INPUT_DATA_PATH="/saisdata/LIP_data_test_A.pkl"
 OUTPUT_CSV_PATH="/saisresult/submit.csv"
 CONFIG_FILE="/app/config.yaml"
 MODEL_DIR="/app/outputs"

@@ -62,7 +62,7 @@ def predict_and_save_submission(config_path, model_dir, input_path, output_path)
     
     config = OmegaConf.load(config_path)
     
-    esm_model_local_path = "./esm2_model_local"
+    esm_model_local_path = "/app/esm2_model_local"
     print(f"Loading feature extractor from local path: {esm_model_local_path}")
     esm_tokenizer = AutoTokenizer.from_pretrained(esm_model_local_path)
     esm_model = EsmModel.from_pretrained(esm_model_local_path).to(device)
